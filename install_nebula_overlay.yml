@@ -1,0 +1,16 @@
+- hosts: [home, phone, games, server]
+  become: true
+  vars:
+  tasks:
+    - import_role:
+        name: Nebula-Ansible-Role
+      vars:
+        nebula_network_name: "avoid-nebula"
+        nebula_node_use_lighthouse_as_relay: false
+        nebula_lighthouses_inventory: [home]
+        nebula_lighthouse_hostname: home
+        nebula_lighthouse_public_hostname: "{{ config['home'].interfaces[0].ip }}"
+        nebula_lighthouse_internal_ip_addr: "{{ overlay['home'].ip }}"
+        nebula_network_cidr: "{{ overlay['home'].netmask }}"
+        nebula_clean_install: true
+        nebula_internal_ip_addr: "{{ overlay[inventory_hostname].ip }}"

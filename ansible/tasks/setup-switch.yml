@@ -1,0 +1,12 @@
+- hosts: s
+  become: true
+  tasks:
+    - name: set up bridge
+      nclu:
+        commands:
+          - add int swp1
+          - add int swp2
+          - add int swp3
+          - add int swp4
+          - add bridge bridge ports swp1-4
+        atomic: true

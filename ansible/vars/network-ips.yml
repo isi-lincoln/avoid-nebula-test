@@ -1,0 +1,45 @@
+config:
+  'phone':
+    interfaces:
+    - ip: 10.0.0.1
+      netmask: 24
+      name: eth1
+      network: s 
+  'home':
+    interfaces:
+    - ip: 10.0.0.10
+      netmask: 24
+      name: eth1
+      network: s
+    - ip: 10.100.0.1
+      netmask: 24
+      name: eth2
+      network: game
+  'games':
+    interfaces:
+    - ip: 10.100.0.100
+      netmask: 24
+      name: eth1
+      network: home
+  'x':
+    interfaces:
+    - ip: 10.0.0.150
+      name: eth1
+      network: s
+      netmask: 24
+  'work':
+    interfaces:
+    - ip: 10.0.0.200
+      netmask: 24
+      name: eth1
+      network: s
+    - ip: 10.200.0.1
+      netmask: 24
+      name: eth2
+      network: server
+  'server':
+    interfaces:
+    - ip: 10.200.0.100
+      netmask: 24
+      name: eth1
+      network: work

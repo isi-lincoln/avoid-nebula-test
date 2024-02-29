@@ -1,0 +1,3 @@
+[submodule "nebula-role"]
+	path = nebula-role
+	url = https://github.com/isi-lincoln/nebula-role.git
