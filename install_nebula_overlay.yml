@@ -3,7 +3,7 @@
   vars:
   tasks:
     - import_role:
-        name: Nebula-Ansible-Role
+        name: nebula-role
       vars:
         nebula_network_name: "avoid-nebula"
         nebula_node_use_lighthouse_as_relay: false
