@@ -1,0 +1,24 @@
+- hosts: ["home", "work"]
+  tasks:
+    - name: enable forwarding
+      command: echo 1 > /proc/sys/net/ipv4/ip_forward
+      become: yes
+
+    - name: flush iptables
+      command: "{{ item }}"
+      loop:
+        - iptables -F
+        - iptables -t nat -F
+      become: yes
+
+    - name: setting up nat masquerage
+      command: /sbin/iptables -t nat -A POSTROUTING -o {{ config[inventory_hostname].nat.ingress }} -j MASQUERADE
+      become: yes
+
+    - name: setting up nat table
+      command: /sbin/iptables -A FORWARD -i {{ config[inventory_hostname].nat.ingress }} -o {{ config[inventory_hostname].nat.egress }} -m state --state RELATED,ESTABLISHED -j ACCEPT
+      become: yes
+
+    - name: setting up reverse rule
+      command: /sbin/iptables -A FORWARD -i {{ config[inventory_hostname].nat.egress }} -o {{ config[inventory_hostname].nat.ingress }}  -j ACCEPT
+      become: yes

@@ -1,0 +1,29 @@
+ziti:
+  controller:
+    - home
+  router:
+    - home
+  volume: myPersistentZitiFiles
+  network: myFirstZitiNetwork
+
+overlay:
+  'phone':
+    ip: 192.168.1.100
+    netmask: 24
+    name: neb1
+    network: overlay
+  'home':
+    ip: 192.168.1.1
+    name: neb1
+    netmask: 24
+    network: nebula
+  'games':
+    ip: 192.168.1.10
+    name: neb1
+    netmask: 24
+    network: nebula
+  'server':
+    ip: 192.168.1.11
+    name: neb1
+    netmask: 24
+    network: nebula

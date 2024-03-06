@@ -30,3 +30,11 @@
         - "{{ vars['config'][inventory_hostname].interfaces }}"
       become: yes
       when: inventory_hostname in vars['config']
+
+- hosts: ["home", "work"]
+  tasks:
+    - name: add routes to other's network
+      shell: ip route add {{ item }} dev eth1
+      with_items:
+        - "{{ vars['config'][inventory_hostname].interfaces[0].routes }}"
+      become: yes

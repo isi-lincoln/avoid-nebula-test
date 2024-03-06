@@ -1,0 +1,120 @@
+- hosts: home
+  tasks:
+#    - name: get all addresses
+#      shell: ip -br addr | grep eth | grep -v eth0 | cut -d ' ' -f 1
+#      register: num_eths
+#      when: inventory_hostname in vars['config']
+#
+#    - debug: var=num_eths
+#
+#    - set_fact:
+#        ifaces: "{{ num_eths.stdout_lines }}"
+#
+#    - name: flush interface
+#      command: ip addr flush {{ item.name }}
+#      with_items:
+#        - "{{ vars['config'][inventory_hostname].interfaces }}"
+#      become: yes
+#      when: inventory_hostname in vars['config']
+#
+#    - name: set addr interface
+#      command: ip addr add {{ item.ip }}/{{ item.netmask }} dev {{ item.name }}
+#      with_items:
+#        - "{{ vars['config'][inventory_hostname].interfaces }}"
+#      become: yes
+#      when: inventory_hostname in vars['config']
+#
+#    - name: set link up
+#      command: ip link set up {{ item.name }}
+#      with_items:
+#        - "{{ vars['config'][inventory_hostname].interfaces }}"
+#      become: yes
+#      when: inventory_hostname in vars['config']
+    - name: get jq
+      apt:
+        pkg: jq
+      become: yes
+
+    - name: get ziti-cli-things
+      shell: wget https://get.openziti.io/ziti-cli-functions.sh
+
+    - name: do ziti controller
+      shell: source ziti-cli-functions.sh && stopController
+      args:
+        executable: /bin/bash
+      environment:
+        ZITI_CTRL_EDGE_ADVERTISED_ADDRESS: config["home"].interfaces[0].ip
+        ZITI_CTRL_EDGE_ADVERTISED_PORT: 1280
+        ZITI_HOME: /home/rvn/.ziti/quickstart/10.0.0.10
+        ZITI_BIN_DIR: /home/rvn/.ziti/quickstart/10.0.0.10/ziti-bin/
+        ZITI_CTRL_NAME: 10.0.0.10
+        ZITI_CTRL_EDGE_NAME: 10.0.0.10
+        ZITI_PWD: 123456
+      ignore_errors: yes
+
+    - name: do ziti router 
+      shell: source ziti-cli-functions.sh && stopRouter
+      args:
+        executable: /bin/bash
+      environment:
+        ZITI_ROUTER_ADVERTISED_ADDRESS: config["home"].interfaces[0].ip
+        ZITI_ROUTER_PORT: 1281
+        ZITI_ROUTER_NAME: 10.0.0.10
+        ZITI_HOME: /home/rvn/.ziti/quickstart/10.0.0.10
+        ZITI_BIN_DIR: /home/rvn/.ziti/quickstart/10.0.0.10/ziti-bin/
+        ZITI_CTRL_NAME: 10.0.0.10
+        ZITI_CTRL_EDGE_NAME: 10.0.0.10
+        ZITI_PWD: 123456
+      ignore_errors: yes
+
+    - name: unset ziti things
+      shell: source ziti-cli-functions.sh && unsetZitiEnv
+      args:
+        executable: /bin/bash
+
+    - name: remove ziti directory
+      shell: rm -rf /home/rvn/.ziti/
+
+    - name: do ziti install 
+      shell: source ziti-cli-functions.sh && yes | expressInstall 10.0.0.10
+      args:
+        executable: /bin/bash
+      environment:
+        ZITI_PWD: 123456
+        ZITI_ROUTER_ADVERTISED_ADDRESS: config["home"].interfaces[0].ip
+        ZITI_ROUTER_PORT: 1281
+        ZITI_ROUTER_NAME: 10.0.0.10
+        ZITI_HOME: /home/rvn/.ziti/quickstart/10.0.0.10
+        ZITI_BIN_DIR: /home/rvn/.ziti/quickstart/10.0.0.10/ziti-bin/
+        ZITI_CTRL_NAME: 10.0.0.10
+        ZITI_CTRL_EDGE_NAME: 10.0.0.10
+        ZITI_CTRL_EDGE_ADVERTISED_ADDRESS: config["home"].interfaces[0].ip
+        ZITI_CTRL_EDGE_ADVERTISED_PORT: 1280
+
+    - name: do ziti controller
+      shell: source ziti-cli-functions.sh && startController
+      args:
+        executable: /bin/bash
+      environment:
+        ZITI_CTRL_EDGE_ADVERTISED_ADDRESS: config["home"].interfaces[0].ip
+        ZITI_CTRL_EDGE_ADVERTISED_PORT: 1280
+        ZITI_HOME: /home/rvn/.ziti/quickstart/10.0.0.10
+        ZITI_BIN_DIR: /home/rvn/.ziti/quickstart/10.0.0.10/ziti-bin/
+        ZITI_CTRL_NAME: 10.0.0.10
+        ZITI_CTRL_EDGE_NAME: 10.0.0.10
+        ZITI_PWD: 123456
+
+    - name: do ziti router 
+      shell: source ziti-cli-functions.sh && startRouter
+      args:
+        executable: /bin/bash
+      environment:
+        ZITI_ROUTER_ADVERTISED_ADDRESS: config["home"].interfaces[0].ip
+        ZITI_ROUTER_PORT: 1281
+        ZITI_ROUTER_NAME: 10.0.0.10
+        ZITI_HOME: /home/rvn/.ziti/quickstart/10.0.0.10
+        ZITI_BIN_DIR: /home/rvn/.ziti/quickstart/10.0.0.10/ziti-bin/
+        ZITI_CTRL_NAME: 10.0.0.10
+        ZITI_CTRL_EDGE_NAME: 10.0.0.10
+        ZITI_PWD: 123456
+

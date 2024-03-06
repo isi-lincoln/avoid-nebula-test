@@ -1,0 +1,31 @@
+- hosts: ["home", "phone", "games", "server"]
+  tasks: 
+    - name: install docker
+      shell: curl -s https://get.docker.com | bash
+
+    - name: kill all containers
+      shell: docker kill $(docker ps -aq) && docker rm $(docker ps -aq)
+      become: yes
+      ignore_errors: yes
+
+    - name: pull the image before we need it
+      shell: docker pull openziti/quickstart:latest
+      become: yes
+
+    - name: ensure no volume
+      shell: docker volume rm {{ ziti["volume"] }}
+      become: yes
+      ignore_errors: yes
+
+    - name: ensure docker volume
+      shell: docker volume create {{ ziti["volume"] }} 
+      become: yes
+
+    - name: ensure no network
+      shell: docker network rm {{ ziti["network"] }}
+      become: yes
+      ignore_errors: yes
+
+    - name: ensure docker network
+      shell: docker network create {{ ziti["network"] }} 
+      become: yes
